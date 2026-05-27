@@ -4,18 +4,18 @@ const fs = require('fs')
 
 const app = express()
 
-// Web server for Replit uptime
-const PORT = process.env.PORT || 3000
+// Render requires a web server on process.env.PORT
+const PORT = process.env.PORT || 10000
 
 app.get('/', (req, res) => {
-    res.send('Minecraft AFK Bot is running!')
+    res.send('Minecraft AFK Bot is running')
 })
 
 app.listen(PORT, () => {
-    console.log(`Web server running on port ${PORT}`)
+    console.log('Web server running on port', PORT)
 })
 
-// Read config
+// Load config
 const config = JSON.parse(fs.readFileSync('config.json'))
 
 const [host, port] = config.server.split(':')
@@ -30,19 +30,16 @@ function startBot() {
     })
 
     bot.on('login', () => {
-        console.log('Bot joined the server!')
+        console.log('Bot logged in')
     })
 
     bot.on('spawn', () => {
-        console.log('Bot spawned!')
+        console.log('Bot spawned')
     })
 
     bot.on('end', () => {
-        console.log('Disconnected. Reconnecting in 5 seconds...')
-
-        setTimeout(() => {
-            startBot()
-        }, 5000)
+        console.log('Disconnected → reconnecting...')
+        setTimeout(startBot, 5000)
     })
 
     bot.on('kicked', (reason) => {
@@ -55,24 +52,16 @@ function startBot() {
 
     // Anti-AFK movement
     setInterval(() => {
-
         if (!bot.entity) return
 
-        const actions = [
-            'forward',
-            'back',
-            'left',
-            'right'
-        ]
+        const moves = ['forward', 'back', 'left', 'right']
+        const move = moves[Math.floor(Math.random() * moves.length)]
 
-        const action =
-            actions[Math.floor(Math.random() * actions.length)]
-
-        bot.setControlState(action, true)
+        bot.setControlState(move, true)
 
         setTimeout(() => {
-            bot.setControlState(action, false)
-        }, 2000)
+            bot.setControlState(move, false)
+        }, 1500)
 
     }, 30000)
 }
