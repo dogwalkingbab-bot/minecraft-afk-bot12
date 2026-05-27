@@ -1,6 +1,21 @@
 const mineflayer = require('mineflayer')
+const express = require('express')
 const fs = require('fs')
 
+const app = express()
+
+// Web server for Replit uptime
+const PORT = process.env.PORT || 3000
+
+app.get('/', (req, res) => {
+    res.send('Minecraft AFK Bot is running!')
+})
+
+app.listen(PORT, () => {
+    console.log(`Web server running on port ${PORT}`)
+})
+
+// Read config
 const config = JSON.parse(fs.readFileSync('config.json'))
 
 const [host, port] = config.server.split(':')
@@ -38,6 +53,7 @@ function startBot() {
         console.log('Error:', err)
     })
 
+    // Anti-AFK movement
     setInterval(() => {
 
         if (!bot.entity) return
